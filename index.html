@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People Benefits - Impacto Auxílio Creche</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .ifood-red { color: #ea1d2c; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .creche-btn-active { background-color: #ea1d2c !important; color: white !important; }
+        .scroll-custom::-webkit-scrollbar { width: 6px; }
+        .scroll-custom::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scroll-custom::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-7xl mx-auto space-y-8">
+        
+        <!-- Header & Cenários -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <span class="bg-red-100 text-red-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Relatório Consolidado 2026</span>
+                <h2 class="text-3xl font-black text-slate-800 mt-2">People <span class="ifood-red">Benefits</span></h2>
+            </div>
+            <div class="flex gap-2 p-1 bg-slate-200 rounded-lg">
+                <button onclick="switchScenario(1)" id="btnSc1" class="creche-btn-active px-6 py-2 text-xs font-bold rounded-md uppercase transition-all shadow-sm">Cenário 1: Ajuste 4,1%</button>
+                <button onclick="switchScenario(2)" id="btnSc2" class="bg-transparent text-slate-500 px-6 py-2 text-xs font-bold rounded-md uppercase transition-all">Sem Reajuste (Manter)</button>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="card p-6 border-b-4 border-slate-300">
+                <p class="text-[10px] text-slate-400 font-black uppercase mb-1">Beneficiários</p>
+                <h3 class="text-3xl font-black text-slate-800">1.211</h3>
+            </div>
+            <div class="card p-6 border-b-4 border-blue-500">
+                <p class="text-[10px] text-slate-400 font-black uppercase mb-1">Custo Mensal 2025</p>
+                <h3 class="text-2xl font-black text-slate-800">R$ 820.980,00</h3>
+            </div>
+            <div class="card p-6 border-b-4 border-green-500">
+                <p class="text-[10px] text-slate-400 font-black uppercase mb-1" id="labelNovo">Custo Mensal 2026</p>
+                <h3 class="text-2xl font-black text-slate-800" id="valNovo">R$ 852.429,60</h3>
+            </div>
+            <div class="card p-6 border-b-4 border-red-500">
+                <p class="text-[10px] text-slate-400 font-black uppercase mb-1">Delta Mensal</p>
+                <h3 class="text-3xl font-black ifood-red" id="valDelta">R$ 31.449,60</h3>
+            </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Gráfico de Evolução -->
+            <div class="lg:col-span-2 card p-8">
+                <h3 class="text-sm font-black text-slate-800 uppercase tracking-wider mb-8">Evolução Histórica iFood (Auxílio Creche)</h3>
+                <div class="h-[400px]">
+                    <canvas id="chartHistory"></canvas>
+                </div>
+            </div>
+
+            <!-- Painel Lateral -->
+            <div class="space-y-6">
+                <!-- Racional & Referencial -->
+                <div class="card p-6 bg-slate-50 border border-slate-200">
+                    <h3 class="text-[10px] font-black text-slate-800 uppercase mb-4 text-center tracking-widest">Detalhes de Projeção</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-slate-400">
+                            <p class="text-[9px] uppercase font-black text-slate-500 mb-1 tracking-tighter">Racional Aplicado</p>
+                            <p class="text-[11px] text-slate-600 leading-relaxed italic">O ajuste de 4,1% reflete o alinhamento com o IPCA do período, garantindo a manutenção do poder de compra para os beneficiários.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-red-500">
+                            <p class="text-[9px] uppercase font-black text-slate-500 mb-1 tracking-tighter">Referencial Lockton</p>
+                            <ul class="text-[11px] text-slate-700 space-y-1 font-bold">
+                                <li class="flex justify-between"><span>Verba Fixa (Mediana):</span> <span>R$ 501</span></li>
+                                <li class="flex justify-between"><span>Verba Fixa (3º Quartil):</span> <span>R$ 683</span></li>
+                                <li class="flex justify-between ifood-red"><span>iFood (Novo):</span> <span>R$ 599,04</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benchmarks -->
+                <div class="card p-6">
+                    <h3 class="text-[10px] font-black text-slate-800 uppercase mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-4 bg-indigo-600 rounded-full"></span> Benchmarks Creche
+                    </h3>
+                    <div class="h-[220px]">
+                        <canvas id="chartBench"></canvas>
+                    </div>
+                    <div class="mt-6 space-y-2">
+                        <div class="p-3 bg-indigo-50 rounded-lg text-[10px] font-bold border border-indigo-100">
+                            <p class="text-indigo-900 uppercase">Nubank</p>
+                            <p class="text-indigo-600">Flex + Parentalidade holística (Suporte 180 dias+)</p>
+                        </div>
+                        <div class="p-3 bg-amber-50 rounded-lg text-[10px] font-bold border border-amber-100">
+                            <p class="text-amber-900 uppercase">Meli</p>
+                            <p class="text-amber-600">Modelo de Reembolso estruturado (Quartil Superior)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela Detalhada -->
+        <div class="card overflow-hidden">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                <h3 class="text-xs font-black uppercase tracking-widest">Impacto Detalhado por Empresa</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="p-4 text-[10px] font-black text-slate-500 uppercase">Empresa</th>
+                            <th class="p-4 text-[10px] font-black text-slate-500 uppercase text-center">QTDE Pessoas</th>
+                            <th class="p-4 text-[10px] font-black text-slate-500 uppercase text-right">Valor Atual</th>
+                            <th class="p-4 text-[10px] font-black text-slate-500 uppercase text-right" id="thNovo">Valor com Reajuste</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
+                    <tfoot class="bg-slate-50 font-black border-t-2 border-slate-200">
+                        <tr>
+                            <td class="p-4 uppercase">Total Geral</td>
+                            <td class="p-4 text-center">1.211</td>
+                            <td class="p-4 text-right">R$ 820.980,00</td>
+                            <td class="p-4 text-right ifood-red" id="footNovo">R$ 852.429,60</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados da Tabela (Baseado no Print do Excel)
+        const companies = [
+            { id: '0001', name: "ADVOLVE AI LTDA", q: 9, cur: 5184.00, next: 5391.36 },
+            { id: '001', name: "ENTREGO FRANQUIA LTDA", q: 3, cur: 1728.00, next: 1797.12 },
+            { id: '001', name: "IFOOD BENEFICIOS E SERVICOS LTDA.", q: 6, cur: 3456.00, next: 3594.24 },
+            { id: '001', name: "IFOOD PAGO INSTITUIÇÃO DE PAGAMENTO S.A.", q: 47, cur: 34110.00, next: 34110.00 },
+            { id: '001', name: "IFOOD PAGO SOCIEDADE DE CREDITO DIRETO S.A.", q: 1, cur: 576.00, next: 599.04 },
+            { id: '001', name: "IFOOD.COM AGENCIA DE RESTAURANTES ONLINE S.A", q: 1145, cur: 775926.00, next: 806937.84 }
+        ];
+
+        // Dados do Gráfico de Histórico
+        const historyData = {
+            years: ['2022', '2023', '2024', '2025', '2026*'],
+            ifood: [461, 542, 565, 576, 599], 
+            sind: [461, 542, 565, 576, 570],
+            growth: ['-', '+17.6%', '+4.2%', '+1.9%', '+4.0%']
+        };
+
+        let activeScenario = 1;
+        let chartH, chartB;
+
+        function f(v) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v); }
+
+        function switchScenario(id) {
+            activeScenario = id;
+            document.getElementById('btnSc1').className = id === 1 ? 'creche-btn-active px-6 py-2 text-xs font-bold rounded-md uppercase transition-all shadow-sm' : 'bg-transparent text-slate-500 px-6 py-2 text-xs font-bold rounded-md uppercase transition-all';
+            document.getElementById('btnSc2').className = id === 2 ? 'creche-btn-active px-6 py-2 text-xs font-bold rounded-md uppercase transition-all shadow-sm' : 'bg-transparent text-slate-500 px-6 py-2 text-xs font-bold rounded-md uppercase transition-all';
+            
+            // Update KPIs
+            if (id === 1) {
+                document.getElementById('valNovo').innerText = "R$ 852.429,60";
+                document.getElementById('valDelta').innerText = "R$ 31.449,60";
+                document.getElementById('thNovo').innerText = "Valor com Reajuste";
+                document.getElementById('footNovo').innerText = "R$ 852.429,60";
+            } else {
+                document.getElementById('valNovo').innerText = "R$ 820.980,00";
+                document.getElementById('valDelta').innerText = "R$ 0,00";
+                document.getElementById('thNovo').innerText = "Valor Mantido";
+                document.getElementById('footNovo').innerText = "R$ 820.980,00";
+            }
+            
+            renderTable();
+            renderHistory();
+        }
+
+        function renderTable() {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            companies.forEach(c => {
+                const target = activeScenario === 1 ? c.next : c.cur;
+                body.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-bold text-slate-700 text-[11px]">${c.id} - ${c.name}</td>
+                        <td class="p-4 text-center font-bold text-slate-500 text-xs">${c.q}</td>
+                        <td class="p-4 text-right text-slate-600 font-medium text-xs">${f(c.cur)}</td>
+                        <td class="p-4 text-right font-black text-xs ${target > c.cur ? 'ifood-red' : 'text-slate-900'}">${f(target)}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderHistory() {
+            if (chartH) chartH.destroy();
+            const dataIfood = [...historyData.ifood];
+            if (activeScenario === 2) dataIfood[4] = 576;
+
+            chartH = new Chart(document.getElementById('chartHistory'), {
+                type: 'line',
+                data: {
+                    labels: historyData.years,
+                    datasets: [
+                        {
+                            label: 'iFood (R$)',
+                            data: dataIfood,
+                            borderColor: '#ea1d2c',
+                            backgroundColor: '#ea1d2c',
+                            borderWidth: 4,
+                            pointRadius: 6,
+                            tension: 0.3,
+                            datalabels: {
+                                align: 'top', offset: 12, color: '#b91c1c', font: { weight: 'bold', size: 10 },
+                                formatter: (v, ctx) => `R$ ${v}\n(${activeScenario === 1 ? historyData.growth[ctx.dataIndex] : (ctx.dataIndex === 4 ? '+0.0%' : historyData.growth[ctx.dataIndex])})`
+                            }
+                        },
+                        {
+                            label: 'Sindicato (R$)',
+                            data: historyData.sind,
+                            borderColor: '#94a3b8',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 4,
+                            tension: 0.3,
+                            datalabels: { align: 'bottom', offset: 12, color: '#64748b', font: { size: 9 }, formatter: v => `R$ ${v}` }
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    layout: { padding: { top: 50, bottom: 20 } },
+                    plugins: { legend: { display: false }, datalabels: { display: true, textAlign: 'center' } },
+                    scales: { 
+                        y: { beginAtZero: false, suggestedMin: 440, suggestedMax: 650, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { font: { weight: 'bold' } } }
+                    }
+                }
+            });
+        }
+
+        function renderBench() {
+            if (chartB) chartB.destroy();
+            chartB = new Chart(document.getElementById('chartBench'), {
+                type: 'bar',
+                data: {
+                    labels: ['Itaú', 'iFood (Novo)', 'Meli', 'Nubank'],
+                    datasets: [{
+                        data: [600, 599, 1000, 1500],
+                        backgroundColor: ['#f97316', '#ea1d2c', '#fbbf24', '#6366f1'],
+                        borderRadius: 6,
+                        barThickness: 35
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'top', color: '#1e293b', font: { weight: 'bold', size: 10 }, formatter: v => 'R$ ' + v } },
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 10 } } } }
+                }
+            });
+        }
+
+        window.onload = function() {
+            Chart.register(ChartDataLabels);
+            renderTable();
+            renderHistory();
+            renderBench();
+        };
+    </script>
+</body>
+</html>
