@@ -67,8 +67,8 @@
 
             <!-- Painel Lateral -->
             <div class="space-y-6">
-                <!-- Racional & Referencial -->
-                <div class="card p-6 bg-slate-50 border border-slate-200">
+                <!-- Racional & Referencial (Oculto no Cenário 2) -->
+                <div id="projectionDetails" class="card p-6 bg-slate-50 border border-slate-200">
                     <h3 class="text-[10px] font-black text-slate-800 uppercase mb-4 text-center tracking-widest">Detalhes de Projeção</h3>
                     <div class="space-y-4">
                         <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-slate-400">
@@ -97,11 +97,15 @@
                     <div class="mt-6 space-y-2">
                         <div class="p-3 bg-indigo-50 rounded-lg text-[10px] font-bold border border-indigo-100">
                             <p class="text-indigo-900 uppercase">Nubank</p>
-                            <p class="text-indigo-600">Flex + Parentalidade holística (Suporte 180 dias+)</p>
+                            <p class="text-indigo-600">auxílio creche + suporte financeiro + política parentalidade</p>
                         </div>
                         <div class="p-3 bg-amber-50 rounded-lg text-[10px] font-bold border border-amber-100">
-                            <p class="text-amber-900 uppercase">Meli</p>
-                            <p class="text-amber-600">Modelo de Reembolso estruturado (Quartil Superior)</p>
+                            <p class="text-amber-900 uppercase">Mercado Livre</p>
+                            <p class="text-amber-600">Reembolso sob comprovação de custos</p>
+                        </div>
+                        <div class="p-3 bg-orange-50 rounded-lg text-[10px] font-bold border border-orange-100">
+                            <p class="text-orange-900 uppercase">Itaú</p>
+                            <p class="text-orange-600">CCT</p>
                         </div>
                     </div>
                 </div>
@@ -166,21 +170,24 @@
             document.getElementById('btnSc1').className = id === 1 ? 'creche-btn-active px-6 py-2 text-xs font-bold rounded-md uppercase transition-all shadow-sm' : 'bg-transparent text-slate-500 px-6 py-2 text-xs font-bold rounded-md uppercase transition-all';
             document.getElementById('btnSc2').className = id === 2 ? 'creche-btn-active px-6 py-2 text-xs font-bold rounded-md uppercase transition-all shadow-sm' : 'bg-transparent text-slate-500 px-6 py-2 text-xs font-bold rounded-md uppercase transition-all';
             
-            // Update KPIs
+            // Update KPIs e visibilidade do bloco lateral
             if (id === 1) {
                 document.getElementById('valNovo').innerText = "R$ 852.429,60";
                 document.getElementById('valDelta').innerText = "R$ 31.449,60";
                 document.getElementById('thNovo').innerText = "Valor com Reajuste";
                 document.getElementById('footNovo').innerText = "R$ 852.429,60";
+                document.getElementById('projectionDetails').style.display = 'block';
             } else {
                 document.getElementById('valNovo').innerText = "R$ 820.980,00";
                 document.getElementById('valDelta').innerText = "R$ 0,00";
                 document.getElementById('thNovo').innerText = "Valor Mantido";
                 document.getElementById('footNovo').innerText = "R$ 820.980,00";
+                document.getElementById('projectionDetails').style.display = 'none';
             }
             
             renderTable();
             renderHistory();
+            renderBench();
         }
 
         function renderTable() {
@@ -248,12 +255,15 @@
 
         function renderBench() {
             if (chartB) chartB.destroy();
+            const ifoodValue = activeScenario === 1 ? 599 : 576;
+            const ifoodLabel = activeScenario === 1 ? 'iFood (Novo)' : 'iFood (Atual)';
+            
             chartB = new Chart(document.getElementById('chartBench'), {
                 type: 'bar',
                 data: {
-                    labels: ['Itaú', 'iFood (Novo)', 'Meli', 'Nubank'],
+                    labels: ['Itaú', ifoodLabel, 'Mercado Livre', 'Nubank'],
                     datasets: [{
-                        data: [600, 599, 1000, 1500],
+                        data: [600, ifoodValue, 1000, 1500],
                         backgroundColor: ['#f97316', '#ea1d2c', '#fbbf24', '#6366f1'],
                         borderRadius: 6,
                         barThickness: 35
@@ -261,8 +271,9 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
+                    layout: { padding: { top: 30 } },
                     plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'top', color: '#1e293b', font: { weight: 'bold', size: 10 }, formatter: v => 'R$ ' + v } },
-                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 10 } } } }
+                    scales: { y: { display: false, suggestedMax: 1800 }, x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 10 } } } }
                 }
             });
         }
